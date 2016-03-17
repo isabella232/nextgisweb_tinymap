@@ -103,7 +103,8 @@ function initmap() {
 
     //get layer aliases from ngw
 
-    aliases=getNGWAliases(ngwLayerURL);
+    LayerDescription=getNGWDescribeFeatureType(ngwLayerURL);
+
 }
 
 function addDataToMap(data, map) {
@@ -177,7 +178,7 @@ return L.marker(latlng, {icon: standartIcon});
 }
 
 
-function getPopupHTML(feature,aliases) {
+function getPopupHTML(feature,LayerDescription) {
 
     data=feature.properties;
 
@@ -209,7 +210,7 @@ function whenClicked(e) {
     var feature;
     var aliases; 
 
-    popupHTML = getPopupHTML(e.target.feature,aliases);
+    popupHTML = getPopupHTML(e.target.feature,LayerDescription);
 
 
     var popup = new L.Popup();
@@ -223,7 +224,7 @@ function whenClicked(e) {
 
 
 
-function getNGWAliases(url)
+function getNGWDescribeFeatureType(url)
 {
 
     url1=url+'';//sample: http://176.9.38.120/practice2/api/resource/29
@@ -234,8 +235,16 @@ function getNGWAliases(url)
 if (nRequest['aliaces'].readyState==4) {
 		if (nRequest['aliaces'].status==200) {
             data = eval("(" + nRequest['aliaces'].responseText + ")");
-            console.log('we get data')
-            console.log(data);
+            var attrInfo={};
+
+            fieldsInfo=data.feature_layer.fields;
+
+                for (var key in fieldsInfo) {
+               attrInfo[fieldsInfo[key].keyname]=fieldsInfo[key];
+
+                }
+            return attrInfo;
+
 		}
 	}
 
