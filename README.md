@@ -9,10 +9,12 @@ Simple Lefleat based map frontend for NextGIS Web
 Installation
 --------------------
 
-Set NGW layer URL in tynymap.js
+
+1. Rename config.example.js to config.js
+2. Set ngwLayerURL
 
 ```
-var ngwLayerURL='http://176.9.38.120/practice2/api/resource/31';
+ngwLayerURL: 'http://176.9.38.120/practice2/api/resource/31'
 ```
 
 Bounding box will be calculated authomatically.
