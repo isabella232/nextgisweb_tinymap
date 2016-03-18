@@ -21,7 +21,7 @@ var nRequest = new Array;
 
 
 //var ngwLayerURL='http://78.46.100.76/opendata_ngw/api/resource/586'    //production
-var ngwLayerURL='http://176.9.38.120/practice2/api/resource/29'     //debug
+var ngwLayerURL='http://176.9.38.120/practice2/api/resource/31'     //debug
 
 
 
