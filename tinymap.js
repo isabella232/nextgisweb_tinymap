@@ -26,7 +26,7 @@ var nRequest = new Array;
 var ngwLayerURL='http://176.9.38.120/practice2/api/resource/31';     //debug
 
 
-
+var ngwLayerURL = config.ngwLayerURL;
 
 
 
