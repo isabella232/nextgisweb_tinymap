@@ -19,6 +19,8 @@ var ngwLayerGroup
 var plotlayers=[];
 var nRequest = new Array;
 
+var LayerDescription = new Array;
+
 
 //Set layer URL here 
 
@@ -95,17 +97,22 @@ function initmap() {
 
     ngwLayerGroup = L.featureGroup().addTo(map);
 
-    console.log('start askforplots');
+
 	askForPlots();
 	map.on('moveend', onMapMove);
 
     //set map extent to bbox of ngwLayers
-    setTimeout(function(){ console.log("timeout done");map.fitBounds(ngwLayerGroup.getBounds().pad(0.5));}, 500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
+    setTimeout(function(){ console.log("timeout done");map.fitBounds(ngwLayerGroup.getBounds().pad(0.9));}, 500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
 
 
     //get layer aliases from ngw
 
-    LayerDescription=getNGWDescribeFeatureType(ngwLayerURL);
+    //LayerDescription=getNGWDescribeFeatureType(ngwLayerURL);
+    getNGWDescribeFeatureType(ngwLayerURL);
+    //console.log('up');
+
+
+
 
 }
 
@@ -180,9 +187,14 @@ return L.marker(latlng, {icon: standartIcon});
 }
 
 
-function getPopupHTML(feature,LayerDescription) {
+function getPopupHTML(feature,FieldsDescriptions) {
 
     data=feature.properties;
+
+    var hideEmptyFields=true;
+    
+ 
+    console.log(FieldsDescriptions);
 
     var header = '<h3>Название объекта для идентификации</h3>  <div  style="height:300px;  overflow-y: auto;">'
     var footer='</div>'
@@ -191,7 +203,7 @@ function getPopupHTML(feature,LayerDescription) {
     content=content+'<table>';
     for (var key in data) {
         let value = data[key];
-        content=content+'<tr><td>'+key+'</td><td>'+value+'</td><tr>';
+        content=content+'<tr><td>'+FieldsDescriptions[key].display_name+'</td><td>'+value+'</td><tr>';
     }
     content=content+'</table>';
     return header+content+footer;
@@ -230,7 +242,7 @@ function getNGWDescribeFeatureType(url)
 {
 
     url1=url+'';//sample: http://176.9.38.120/practice2/api/resource/29
-    console.log('get aliases   '+url1);
+    //console.log('get aliases   '+url1);
 
 
 	nRequest['aliaces'].onreadystatechange = function() {
@@ -245,6 +257,8 @@ if (nRequest['aliaces'].readyState==4) {
                attrInfo[fieldsInfo[key].keyname]=fieldsInfo[key];
 
                 }
+                //console.log(attrInfo);
+            LayerDescription = attrInfo;    //put to global variable
             return attrInfo;
 
 		}
