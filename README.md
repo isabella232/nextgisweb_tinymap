@@ -5,6 +5,18 @@ Simple Lefleat based map frontend for NextGIS Web
 
 ![screenshot](screenshot.png)
 
+
+Installation
+--------------------
+
+Set NGW layer URL in tynymap.js
+
+```
+var ngwLayerURL='http://176.9.38.120/practice2/api/resource/31';
+```
+
+Bounding box will be calculated authomatically.
+
 Commercial support
 ----------
 Need to fix a bug or add a feature to nextgisweb_tinymap? We provide custom development and support for this software. [Contact us](http://nextgis.ru/en/contact/) to discuss options!
