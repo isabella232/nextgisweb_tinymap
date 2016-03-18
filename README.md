@@ -3,7 +3,7 @@ Simple Lefleat based map frontend for NextGIS Web
 
 Веб-страница с картой, на которую выводится 1 заданный слой из NextGIS Web. Можно щёлкать по объектам, и смотреть их атрибуты. Эту страницу можно размещать на сторонних сайтах.
 
-[(screenchot.png)]
+![screenshot](screenshot.png)
 
 Commercial support
 ----------
