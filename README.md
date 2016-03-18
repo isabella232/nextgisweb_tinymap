@@ -1,5 +1,5 @@
 # nextgisweb_tinymap
-Simple Lefleat based map frontend for ![NextGIS Web](http://nextgis.ru/nextgis-web).
+Simple Lefleat based map frontend for [NextGIS Web](http://nextgis.ru/nextgis-web).
 
 One-page map with one layer added from NextGIS Web. You can click on features and see their attributes. This app provides an example of how to make maps with NGW for your website.
 
