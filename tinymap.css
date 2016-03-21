@@ -5,3 +5,14 @@ body {
 html, body, #map {
     height: 100%;
 }
+
+
+
+
+#identifyFeatureName {
+font-weight: bolder;
+font-style: oblique;
+font-size: larger;
+
+
+}
