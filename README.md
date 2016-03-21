@@ -1,9 +1,25 @@
 # nextgisweb_tinymap
-Simple Lefleat based map frontend for NextGIS Web
+Simple Lefleat based map frontend for [NextGIS Web](http://nextgis.ru/nextgis-web).
 
-Веб-страница с картой, на которую выводится 1 заданный слой из NextGIS Web. Можно щёлкать по объектам, и смотреть их атрибуты. Эту страницу можно размещать на сторонних сайтах.
+One-page map with one layer added from NextGIS Web. You can click on features and see their attributes. This app provides an example of how to make maps with NGW for your website.
 
-[(screenchot.png)]
+Live demo: http://nextgis.github.io/nextgisweb_tinymap/
+
+![screenshot](screenshot.png)
+
+
+Installation
+--------------------
+
+
+1. Rename config.example.js to config.js
+2. Set ngwLayerURL
+
+```
+ngwLayerURL: 'http://176.9.38.120/practice2/api/resource/31'
+```
+
+Bounding box will be calculated authomatically.
 
 Commercial support
 ----------
