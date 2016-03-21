@@ -196,13 +196,32 @@ function getPopupHTML(feature,FieldsDescriptions) {
  
     console.log(FieldsDescriptions);
 
-    var header = '<h3>Название объекта для идентификации</h3>  <div  style="height:300px;  overflow-y: auto;">'
-    var footer='</div>'
+    //get name for identify
+    
+    for (var key in FieldsDescriptions) {
+        value=FieldsDescriptions[key];
+        if (value.label_field) {
+        var featureNameField=key;
+        }
+    }
+
+    console.log(featureNameField);
+
+    
+    var header = '';
+    
+    if (featureNameField) { 
+        var header = header + '<div id="identifyFeatureName">'+data[featureNameField]+'</div>'; 
+    }
+
+    
+    var header = header + '<div  style="height:300px;  overflow-y: auto;">';
+    var footer='</div>';
     var content='';
 
     content=content+'<table>';
     for (var key in data) {
-        let value = data[key];
+        value = data[key];
         if (FieldsDescriptions[key].grid_visibility) {
             content=content+'<tr><td>'+FieldsDescriptions[key].display_name+'</td><td>'+value+'</td><tr>';
         }

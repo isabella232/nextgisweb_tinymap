@@ -15,7 +15,7 @@ Features
 - [x] Identify window
 - [x] Fields aliaces taken from NextGIS Web layer settings
 - [x] Hide fields - taken from NextGIS Web layer settings
-- [ ] Feature name in identify window - taken from NextGIS Web layer settings
+- [x] Feature name in identify window - taken from NextGIS Web layer settings
 - [ ] Photos
 - [ ] Feature description
 - [ ] Multiple basemap set in config file
