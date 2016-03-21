@@ -24,6 +24,7 @@ Features
 - [ ] Tested with points geometry
 - [ ] Tested with line geometry
 - [ ] Tested with polygon geometry
+- [ ] NGW access error handling
 
 
 Installation
@@ -36,6 +37,24 @@ Installation
 ```
 ngwLayerURL: 'http://176.9.38.120/practice2/api/resource/31'
 ```
+
+3. Выставите права в NextGIS Web
+
+Допустим, у нас в NGW такая структура: 
+
+```
+root
+    L   Classifed data
+    L   Open data
+        L   somefolder 1
+        L   somefolder 2
+        L   data
+            L   Your layer
+```
+Выставите в корне: Разрешить - Гость - Ресурс:Чтение - все ресурсы - нет
+Выставите в группе следующей по уровню, то есть в Open data для гостя: Ресурс:Чтение, Структура данных:Чтение, Данные:Чтение. Метаданные:Чтение(?) - распространять.
+
+
 
 Bounding box will be calculated authomatically.
 
