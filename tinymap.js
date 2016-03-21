@@ -203,7 +203,9 @@ function getPopupHTML(feature,FieldsDescriptions) {
     content=content+'<table>';
     for (var key in data) {
         let value = data[key];
-        content=content+'<tr><td>'+FieldsDescriptions[key].display_name+'</td><td>'+value+'</td><tr>';
+        if (FieldsDescriptions[key].grid_visibility) {
+            content=content+'<tr><td>'+FieldsDescriptions[key].display_name+'</td><td>'+value+'</td><tr>';
+        }
     }
     content=content+'</table>';
     return header+content+footer;
@@ -242,7 +244,7 @@ function getNGWDescribeFeatureType(url)
 {
 
     url1=url+'';//sample: http://176.9.38.120/practice2/api/resource/29
-    //console.log('get aliases   '+url1);
+
 
 
 	nRequest['aliaces'].onreadystatechange = function() {
