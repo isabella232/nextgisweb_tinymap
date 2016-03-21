@@ -31,14 +31,14 @@ Installation
 --------------------
 
 
-1. Rename config.example.js to config.js
-2. Set ngwLayerURL in config.js
+ 1. Rename config.example.js to config.js
+ 2. Set ngwLayerURL in config.js
 
 ```
 ngwLayerURL: 'http://176.9.38.120/practice2/api/resource/31'
 ```
 
-3. Выставите права в NextGIS Web
+ 3. Выставите права в NextGIS Web
 
 Допустим, у нас в NGW такая структура: 
 
