@@ -16,7 +16,8 @@ Features
 - [x] Fields aliaces taken from NextGIS Web layer settings
 - [x] Hide fields - taken from NextGIS Web layer settings
 - [x] Feature name in identify window - taken from NextGIS Web layer settings
-- [ ] Photos
+- [ ] Code and dependencies license clean 
+- [ ] Showing photos from NextGIS Web
 - [ ] Feature description
 - [ ] Multiple basemap set in config file
 - [ ] Attribution strings set in config file
@@ -25,6 +26,7 @@ Features
 - [ ] Tested with line geometry
 - [ ] Tested with polygon geometry
 - [ ] NGW access error handling
+
 
 
 Installation
