@@ -16,3 +16,7 @@ font-size: larger;
 
 
 }
+
+.leaflet-popup-content {
+    width:auto !important;
+}
