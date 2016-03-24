@@ -22,13 +22,16 @@ var nRequest = new Array;
 var LayerDescription = new Array;
 
 
-//Set layer URL here 
-
-//var ngwLayerURL='http://78.46.100.76/opendata_ngw/api/resource/591'    //production
-var ngwLayerURL='http://176.9.38.120/practice2/api/resource/31';     //debug
-
-
 var ngwLayerURL = config.ngwLayerURL;
+
+if (config.NGWPhotoThumbnailSize) {
+
+    var NGWPhotoThumbnailSize=config.NGWPhotoThumbnailSize;
+}
+else
+{
+    var NGWPhotoThumbnailSize='400x300';
+}
 
 
 
@@ -102,14 +105,14 @@ function initmap() {
 	map.on('moveend', onMapMove);
 
     //set map extent to bbox of ngwLayers
-    setTimeout(function(){ console.log("timeout done");map.fitBounds(ngwLayerGroup.getBounds().pad(0.9));}, 500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
+    setTimeout(function(){ map.fitBounds(ngwLayerGroup.getBounds().pad(0.8));}, 900);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
 
 
     //get layer aliases from ngw
 
     //LayerDescription=getNGWDescribeFeatureType(ngwLayerURL);
     getNGWDescribeFeatureType(ngwLayerURL);
-    //console.log('up');
+
 
 
 
@@ -118,7 +121,6 @@ function initmap() {
 
 function addDataToMap(data, map) {
     var dataLayer = L.geoJson(data);
-
     dataLayer.addTo(map);
 }
 
@@ -128,7 +130,7 @@ function askForPlots() {
 	var minll=bounds.getSouthWest();
 	var maxll=bounds.getNorthEast();
 
-    var msg=ngwLayerURL+'/geojson';
+    var msg=ngwLayerURL+'/feature/';
 
 	nRequest['geodata'].onreadystatechange = stateChanged;
 	nRequest['geodata'].open('GET', msg, true);
@@ -143,9 +145,6 @@ function onEachFeature(feature, layer) {
 
     if (feature.type && feature.id) {
 
-        
-        //layer.bindPopup(' ');
-
     layer.on({
         click: whenClicked
     });
@@ -153,6 +152,51 @@ function onEachFeature(feature, layer) {
     }
 }
 
+
+
+function GeoJSONGeom2NGWFeatureGeom(geom)
+{
+
+
+parcedWKT=omnivore.wkt.parse(geom);
+t=parcedWKT._layers[Object.keys(parcedWKT._layers)[0]].feature.geometry;
+
+
+
+return t;
+}
+
+function feature2geojson(features){
+
+geojson={};
+
+geojson=JSON.parse('{"crs": {"type": "name", "properties": {"name": "EPSG:3857"}}, "type": "FeatureCollection"}');
+geojson['features']=[];
+
+
+
+  for (var key in features) {
+        feature=features[key];
+        fields=feature.fields;
+        geojsonFeature={};
+
+        
+        geojsonFeature.type="Feature";
+        geojsonFeature['geometry']=GeoJSONGeom2NGWFeatureGeom(feature.geom);
+        geojsonFeature['properties']=feature.fields;
+        geojsonFeature['id']=feature.id;
+        geojsonFeature['extensions']={};
+        geojsonFeature['extensions']=feature['extensions'];
+    
+        geojson['features'].push(geojsonFeature);
+
+        //if (value.label_field) {
+        //var featureNameField=key;
+        //}
+    }
+
+return geojson;
+}
 
 function stateChanged() {
     
@@ -162,25 +206,29 @@ function stateChanged() {
 		if (nRequest['geodata'].status==200) {
 
 
-            geojson = eval("(" + nRequest['geodata'].responseText + ")");
+            feature = eval("(" + nRequest['geodata'].responseText + ")");
+            geojson = feature2geojson(feature);
+
+
 			//map.clearLayers();
             ngwLayerGroup.clearLayers();
             //alert('removed');
             //addDataToMap(geojson, map);
 
+    
+            sampleString='{"crs": {"type": "name", "properties": {"name": "EPSG:3857"}}, "type": "FeatureCollection", "features": [{"geometry": {"type": "MultiPoint", "coordinates": [[14690369.33878462, 5325725.368936633]]}, "type": "Feature", "properties": {"website": "http://mfc-25.ru", "name_short": "МФЦ Приморского края", "name_official": "Краевое государственное автономное учреждение Приморского края «Многофункциональный центр предоставления государственных и муниципальных услуг в Приморском крае» (КГАУ «МФЦ Приморского края»)", "square": "702", "addr": "690080, Приморский край. г. Владивосток, ул. Борисенко д. 102", "windows": "16", "opening_hours": "пн:  09:00-18:00 (по предварительной записи)вт: 09:00-20:00ср: 11:00-20:00чт: 09:00-20:00пт: 09:00-20:00 сб: 09:00-13:00 вс: выходной", "phone_consult": "(423) 201-01-56", "services_info": "Ознакомиться с авлении.", "director": "Александров Сергей Валерьевич", "issue_info": "ответственность должностных лиц органов государственной власти и учреждений, предоставляющих государственные и муниципальные услуги; информация о порядке возмещения вреда, причиненного заявителю в результате ненадлежащего исполнения либо неисполнения Центром или его работниками обязанностей; информация об обжаловании действий (бездействия), а также решений органов, предоставляющих государственные услуги, и органов, предоставляющих муниципальные услуги, государственных и муниципальных служащих, работников центров государственных и муниципальных услуг;", "start_date": "2013/12/30", "desc": "Центр создан в целльством Российской Федерации."}, "id": 1}]}';
+            //geojson=JSON.parse(sampleString);
 
-        proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
 
-        console.log('start add geojson');
-        geojsonLayer = L.Proj.geoJson(geojson,{
-    onEachFeature: onEachFeature,
-    pointToLayer: function (feature, latlng) {
-        //return L.circleMarker(latlng, geojsonMarkerOptions);
-return L.marker(latlng, {icon: standartIcon});
+            proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
 
-    }
-});//.addTo(map);
-        ngwLayerGroup.addLayer(geojsonLayer);
+            geojsonLayer = L.Proj.geoJson(geojson,{
+            onEachFeature: onEachFeature,
+            pointToLayer: function (feature, latlng) {
+                return L.marker(latlng, {icon: standartIcon});
+                }
+            });
+            ngwLayerGroup.addLayer(geojsonLayer);
 
 		}
 	}
@@ -194,7 +242,6 @@ function getPopupHTML(feature,FieldsDescriptions) {
     var hideEmptyFields=true;
     
  
-    console.log(FieldsDescriptions);
 
     //get name for identify
     
@@ -205,8 +252,23 @@ function getPopupHTML(feature,FieldsDescriptions) {
         }
     }
 
-    console.log(featureNameField);
 
+
+    //photo
+
+    var photos=[];
+
+    for (var key in feature.extensions.attachment) {
+        
+        attachment=feature.extensions.attachment[key];
+        
+        if (attachment.is_image) {
+        var featureNameField=key;
+        photos.push(attachment);
+        }
+    }
+
+    // html
     
     var header = '';
     
@@ -227,6 +289,15 @@ function getPopupHTML(feature,FieldsDescriptions) {
         }
     }
     content=content+'</table>';
+
+
+        for (var key in photos) {
+        photo=photos[key];
+        content=content+'<a target="_blank" href="'+ngwLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/download"><img src="'+ngwLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/image?size='+NGWPhotoThumbnailSize+'" >'+'</img></a>';
+        
+    }
+
+
     return header+content+footer;
 
 }
@@ -239,7 +310,6 @@ function whenClicked(e) {
 
     //featureData=queryGetFeatureInfo(e);
 
-    //console.log(e.target.feature);
 
 
     var feature;
@@ -248,10 +318,32 @@ function whenClicked(e) {
     popupHTML = getPopupHTML(e.target.feature,LayerDescription);
 
 
-    var popup = new L.Popup();
+    var divNode = document.createElement('DIV');
+    divNode.innerHTML = popupHTML;
+
+    var popup = new L.Popup({maxWidth:500});
     popup.setLatLng(e.latlng);
-    popup.setContent(popupHTML);
+    popup.setContent(divNode);
+
+
+
+function onPopupImageLoad() {
+    marker._popup._update();
+}
+
+/*
+var images = popup.contentNode.getElementsByTagName('img');
+
+for (var i = 0, len = images.length; i < len; i++) {
+    images[i].onload = onPopupImageLoad;
+}
+
+*/
     map.openPopup(popup);
+
+
+
+
 
 
 
@@ -278,7 +370,6 @@ if (nRequest['aliaces'].readyState==4) {
                attrInfo[fieldsInfo[key].keyname]=fieldsInfo[key];
 
                 }
-                //console.log(attrInfo);
             LayerDescription = attrInfo;    //put to global variable
             return attrInfo;
 
