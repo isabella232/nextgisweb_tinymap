@@ -17,7 +17,7 @@ Features
 - [x] Hide fields - taken from NextGIS Web layer settings
 - [x] Feature name in identify window - taken from NextGIS Web layer settings
 - [ ] Code and dependencies license clean 
-- [ ] Showing photos from NextGIS Web
+- [x] Showing photos from NextGIS Web
 - [ ] Feature description
 - [ ] Multiple basemap set in config file
 - [ ] Attribution strings set in config file
