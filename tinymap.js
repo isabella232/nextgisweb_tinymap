@@ -22,7 +22,6 @@ var nRequest = new Array;
 var LayerDescription = new Array;
 
 
-
 var ngwLayerURL = config.ngwLayerURL;
 
 if (config.NGWPhotoThumbnailSize) {
@@ -34,7 +33,7 @@ else
     var NGWPhotoThumbnailSize='400x300';
 }
 
-console.log(NGWPhotoThumbnailSize);
+
 
 
 		var standartIcon = L.icon({
@@ -181,7 +180,6 @@ geojson['features']=[];
         fields=feature.fields;
         geojsonFeature={};
 
-        //console.log(feature);
         
         geojsonFeature.type="Feature";
         geojsonFeature['geometry']=GeoJSONGeom2NGWFeatureGeom(feature.geom);
@@ -220,13 +218,10 @@ function stateChanged() {
     
             sampleString='{"crs": {"type": "name", "properties": {"name": "EPSG:3857"}}, "type": "FeatureCollection", "features": [{"geometry": {"type": "MultiPoint", "coordinates": [[14690369.33878462, 5325725.368936633]]}, "type": "Feature", "properties": {"website": "http://mfc-25.ru", "name_short": "МФЦ Приморского края", "name_official": "Краевое государственное автономное учреждение Приморского края «Многофункциональный центр предоставления государственных и муниципальных услуг в Приморском крае» (КГАУ «МФЦ Приморского края»)", "square": "702", "addr": "690080, Приморский край. г. Владивосток, ул. Борисенко д. 102", "windows": "16", "opening_hours": "пн:  09:00-18:00 (по предварительной записи)вт: 09:00-20:00ср: 11:00-20:00чт: 09:00-20:00пт: 09:00-20:00 сб: 09:00-13:00 вс: выходной", "phone_consult": "(423) 201-01-56", "services_info": "Ознакомиться с авлении.", "director": "Александров Сергей Валерьевич", "issue_info": "ответственность должностных лиц органов государственной власти и учреждений, предоставляющих государственные и муниципальные услуги; информация о порядке возмещения вреда, причиненного заявителю в результате ненадлежащего исполнения либо неисполнения Центром или его работниками обязанностей; информация об обжаловании действий (бездействия), а также решений органов, предоставляющих государственные услуги, и органов, предоставляющих муниципальные услуги, государственных и муниципальных служащих, работников центров государственных и муниципальных услуг;", "start_date": "2013/12/30", "desc": "Центр создан в целльством Российской Федерации."}, "id": 1}]}';
             //geojson=JSON.parse(sampleString);
-            //console.log('etalon valid geojson');
-            //console.log(JSON.parse(sampleString));
 
 
             proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
 
-            console.log('start add geojson to leaflet');
             geojsonLayer = L.Proj.geoJson(geojson,{
             onEachFeature: onEachFeature,
             pointToLayer: function (feature, latlng) {
@@ -247,7 +242,6 @@ function getPopupHTML(feature,FieldsDescriptions) {
     var hideEmptyFields=true;
     
  
-    console.log(feature);
 
     //get name for identify
     
@@ -258,10 +252,10 @@ function getPopupHTML(feature,FieldsDescriptions) {
         }
     }
 
-    //console.log(featureNameField);
 
 
     //photo
+
     var photos=[];
 
     for (var key in feature.extensions.attachment) {
@@ -273,9 +267,8 @@ function getPopupHTML(feature,FieldsDescriptions) {
         photos.push(attachment);
         }
     }
-//console.log(photos);
 
-// html
+    // html
     
     var header = '';
     
@@ -297,7 +290,6 @@ function getPopupHTML(feature,FieldsDescriptions) {
     }
     content=content+'</table>';
 
-console.log(feature);
 
         for (var key in photos) {
         photo=photos[key];
@@ -318,7 +310,6 @@ function whenClicked(e) {
 
     //featureData=queryGetFeatureInfo(e);
 
-    //console.log(e.target.feature);
 
 
     var feature;
@@ -330,7 +321,7 @@ function whenClicked(e) {
     var divNode = document.createElement('DIV');
     divNode.innerHTML = popupHTML;
 
-    var popup = new L.Popup(divNode);
+    var popup = new L.Popup({maxWidth:500});
     popup.setLatLng(e.latlng);
     popup.setContent(divNode);
 
@@ -340,13 +331,14 @@ function onPopupImageLoad() {
     marker._popup._update();
 }
 
+/*
 var images = popup.contentNode.getElementsByTagName('img');
 
 for (var i = 0, len = images.length; i < len; i++) {
     images[i].onload = onPopupImageLoad;
 }
 
-
+*/
     map.openPopup(popup);
 
 
@@ -378,7 +370,6 @@ if (nRequest['aliaces'].readyState==4) {
                attrInfo[fieldsInfo[key].keyname]=fieldsInfo[key];
 
                 }
-                //console.log(attrInfo);
             LayerDescription = attrInfo;    //put to global variable
             return attrInfo;
 
