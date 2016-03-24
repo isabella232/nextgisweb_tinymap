@@ -293,7 +293,7 @@ function getPopupHTML(feature,FieldsDescriptions) {
 
         for (var key in photos) {
         photo=photos[key];
-        content=content+'<img src="'+ngwLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/image?size='+NGWPhotoThumbnailSize+'" >'+'</img>';
+        content=content+'<a target="_blank" href="'+ngwLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/download"><img src="'+ngwLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/image?size='+NGWPhotoThumbnailSize+'" >'+'</img></a>';
         
     }
 
