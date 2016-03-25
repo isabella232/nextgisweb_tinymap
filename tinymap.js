@@ -132,7 +132,36 @@ function askForPlots() {
 
     var msg=ngwLayerURL+'/feature/';
 
-	nRequest['geodata'].onreadystatechange = stateChanged;
+	nRequest['geodata'].onreadystatechange = function() {
+    
+	    if (nRequest['geodata'].readyState==4) {
+		    if (nRequest['geodata'].status==200) {
+
+
+                feature = eval("(" + nRequest['geodata'].responseText + ")");
+                geojson = feature2geojson(feature);
+
+                ngwLayerGroup.clearLayers();
+
+                proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
+
+                geojsonLayer = L.Proj.geoJson(geojson,{
+                onEachFeature: onEachFeature,
+                pointToLayer: function (feature, latlng) {
+                    return L.marker(latlng, {icon: standartIcon});
+                    }
+                });
+                ngwLayerGroup.addLayer(geojsonLayer);
+
+		    }
+	    }
+    }
+
+
+
+
+
+
 	nRequest['geodata'].open('GET', msg, true);
 	nRequest['geodata'].send(null);
 }
@@ -198,41 +227,7 @@ geojson['features']=[];
 return geojson;
 }
 
-function stateChanged() {
-    
-	// if AJAX returned a list of markers, add them to the map
-	if (nRequest['geodata'].readyState==4) {
-		//use the info here that was returned
-		if (nRequest['geodata'].status==200) {
 
-
-            feature = eval("(" + nRequest['geodata'].responseText + ")");
-            geojson = feature2geojson(feature);
-
-
-			//map.clearLayers();
-            ngwLayerGroup.clearLayers();
-            //alert('removed');
-            //addDataToMap(geojson, map);
-
-    
-            sampleString='{"crs": {"type": "name", "properties": {"name": "EPSG:3857"}}, "type": "FeatureCollection", "features": [{"geometry": {"type": "MultiPoint", "coordinates": [[14690369.33878462, 5325725.368936633]]}, "type": "Feature", "properties": {"website": "http://mfc-25.ru", "name_short": "МФЦ Приморского края", "name_official": "Краевое государственное автономное учреждение Приморского края «Многофункциональный центр предоставления государственных и муниципальных услуг в Приморском крае» (КГАУ «МФЦ Приморского края»)", "square": "702", "addr": "690080, Приморский край. г. Владивосток, ул. Борисенко д. 102", "windows": "16", "opening_hours": "пн:  09:00-18:00 (по предварительной записи)вт: 09:00-20:00ср: 11:00-20:00чт: 09:00-20:00пт: 09:00-20:00 сб: 09:00-13:00 вс: выходной", "phone_consult": "(423) 201-01-56", "services_info": "Ознакомиться с авлении.", "director": "Александров Сергей Валерьевич", "issue_info": "ответственность должностных лиц органов государственной власти и учреждений, предоставляющих государственные и муниципальные услуги; информация о порядке возмещения вреда, причиненного заявителю в результате ненадлежащего исполнения либо неисполнения Центром или его работниками обязанностей; информация об обжаловании действий (бездействия), а также решений органов, предоставляющих государственные услуги, и органов, предоставляющих муниципальные услуги, государственных и муниципальных служащих, работников центров государственных и муниципальных услуг;", "start_date": "2013/12/30", "desc": "Центр создан в целльством Российской Федерации."}, "id": 1}]}';
-            //geojson=JSON.parse(sampleString);
-
-
-            proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
-
-            geojsonLayer = L.Proj.geoJson(geojson,{
-            onEachFeature: onEachFeature,
-            pointToLayer: function (feature, latlng) {
-                return L.marker(latlng, {icon: standartIcon});
-                }
-            });
-            ngwLayerGroup.addLayer(geojsonLayer);
-
-		}
-	}
-}
 
 
 function getPopupHTML(feature,FieldsDescriptions) {
