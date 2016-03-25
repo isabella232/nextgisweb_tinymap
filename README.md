@@ -20,7 +20,7 @@ Features
 - [x] Showing photos from NextGIS Web
 - [ ] Feature description
 - [ ] Multiple basemap set in config file
-- [ ] Attribution strings set in config file
+- [x] Attribution strings set in config file
 - [ ] Icon filename in config
 - [ ] Tested with points geometry
 - [ ] Tested with line geometry
@@ -34,10 +34,10 @@ Installation
 
 
  1. Rename config.example.js to config.js
- 2. Set ngwLayerURL in config.js
+ 2. Set NGWLayerURL and attribution string in config.js
 
 ```
-ngwLayerURL: 'http://176.9.38.120/practice2/api/resource/31'
+NGWLayerURL: 'http://176.9.38.120/practice2/api/resource/31'
 ```
 
  3. Выставите права в NextGIS Web
