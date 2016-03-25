@@ -22,15 +22,16 @@ var nRequest = new Array;
 var LayerDescription = new Array;
 
 
-//Set layer URL here 
+var NGWLayerURL = config.NGWLayerURL;
 
-//var ngwLayerURL='http://78.46.100.76/opendata_ngw/api/resource/591'    //production
-var ngwLayerURL='http://176.9.38.120/practice2/api/resource/31';     //debug
+if (config.NGWPhotoThumbnailSize) {
 
-
-var ngwLayerURL = config.ngwLayerURL;
-
-
+    var NGWPhotoThumbnailSize=config.NGWPhotoThumbnailSize;
+}
+else
+{
+    var NGWPhotoThumbnailSize='400x300';
+}
 
 
 		var standartIcon = L.icon({
@@ -86,7 +87,7 @@ function initmap() {
 
 	// create the tile layer with correct attribution
 	var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-	var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://primorsky.ru/">Официальный сайт Администрации Приморского края</a>';
+	var osmAttrib='Картографические данные © <a href="http://openstreetmap.org">OpenStreetMap</a>';
 	var osm = new L.TileLayer(osmUrl, {minZoom: 0, maxZoom: 18, attribution: osmAttrib});		
 
 
@@ -100,16 +101,18 @@ function initmap() {
 
 	askForPlots();
 	map.on('moveend', onMapMove);
+    //map.addControl(L.control.attribution('ddd'))
+    //map.control.attribution.addAttribution('2343423');
+//varName = L.control.attribution({prefix: 'some text'}).addTo(map);
 
     //set map extent to bbox of ngwLayers
-    setTimeout(function(){ console.log("timeout done");map.fitBounds(ngwLayerGroup.getBounds().pad(0.9));}, 500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
+    setTimeout(function(){ map.fitBounds(ngwLayerGroup.getBounds().pad(0.8));}, 1500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
 
 
     //get layer aliases from ngw
 
-    //LayerDescription=getNGWDescribeFeatureType(ngwLayerURL);
-    getNGWDescribeFeatureType(ngwLayerURL);
-    //console.log('up');
+    getNGWDescribeFeatureType(NGWLayerURL);
+    map.attributionControl.setPrefix(config.NGWLayerAttribution);
 
 
 
@@ -128,9 +131,39 @@ function askForPlots() {
 	var minll=bounds.getSouthWest();
 	var maxll=bounds.getNorthEast();
 
-    var msg=ngwLayerURL+'/geojson';
+    var msg=NGWLayerURL+'/feature/';
 
-	nRequest['geodata'].onreadystatechange = stateChanged;
+	nRequest['geodata'].onreadystatechange = function() {
+    
+	    if (nRequest['geodata'].readyState==4) {
+		    if (nRequest['geodata'].status==200) {
+
+
+                feature = eval("(" + nRequest['geodata'].responseText + ")");
+                geojson = feature2geojson(feature);
+
+                ngwLayerGroup.clearLayers();
+
+                proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
+
+                geojsonLayer = L.Proj.geoJson(geojson,{
+                onEachFeature: onEachFeature,
+                pointToLayer: function (feature, latlng) {
+                    return L.marker(latlng, {icon: standartIcon});
+                    },
+                attribution: 'пяни',
+                });
+                ngwLayerGroup.addLayer(geojsonLayer);
+
+		    }
+	    }
+    }
+
+
+
+
+
+
 	nRequest['geodata'].open('GET', msg, true);
 	nRequest['geodata'].send(null);
 }
@@ -143,9 +176,6 @@ function onEachFeature(feature, layer) {
 
     if (feature.type && feature.id) {
 
-        
-        //layer.bindPopup(' ');
-
     layer.on({
         click: whenClicked
     });
@@ -154,37 +184,49 @@ function onEachFeature(feature, layer) {
 }
 
 
-function stateChanged() {
+
+function GeoJSONGeom2NGWFeatureGeom(geom)
+{
+
+
+parcedWKT=omnivore.wkt.parse(geom);
+t=parcedWKT._layers[Object.keys(parcedWKT._layers)[0]].feature.geometry;
+
+
+
+return t;
+}
+
+function feature2geojson(features){
+
+geojson={};
+
+geojson=JSON.parse('{"crs": {"type": "name", "properties": {"name": "EPSG:3857"}}, "type": "FeatureCollection"}');
+geojson['features']=[];
+
+
+
+  for (var key in features) {
+        feature=features[key];
+        fields=feature.fields;
+        geojsonFeature={};
+
+        
+        geojsonFeature.type="Feature";
+        geojsonFeature['geometry']=GeoJSONGeom2NGWFeatureGeom(feature.geom);
+        geojsonFeature['properties']=feature.fields;
+        geojsonFeature['id']=feature.id;
+        geojsonFeature['extensions']={};
+        geojsonFeature['extensions']=feature['extensions'];
     
-	// if AJAX returned a list of markers, add them to the map
-	if (nRequest['geodata'].readyState==4) {
-		//use the info here that was returned
-		if (nRequest['geodata'].status==200) {
-
-
-            geojson = eval("(" + nRequest['geodata'].responseText + ")");
-			//map.clearLayers();
-            ngwLayerGroup.clearLayers();
-            //alert('removed');
-            //addDataToMap(geojson, map);
-
-
-        proj4.defs("EPSG:3857","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs");
-
-        console.log('start add geojson');
-        geojsonLayer = L.Proj.geoJson(geojson,{
-    onEachFeature: onEachFeature,
-    pointToLayer: function (feature, latlng) {
-        //return L.circleMarker(latlng, geojsonMarkerOptions);
-return L.marker(latlng, {icon: standartIcon});
+        geojson['features'].push(geojsonFeature);
 
     }
-});//.addTo(map);
-        ngwLayerGroup.addLayer(geojsonLayer);
 
-		}
-	}
+return geojson;
 }
+
+
 
 
 function getPopupHTML(feature,FieldsDescriptions) {
@@ -194,7 +236,6 @@ function getPopupHTML(feature,FieldsDescriptions) {
     var hideEmptyFields=true;
     
  
-    console.log(FieldsDescriptions);
 
     //get name for identify
     
@@ -205,13 +246,30 @@ function getPopupHTML(feature,FieldsDescriptions) {
         }
     }
 
-    console.log(featureNameField);
 
+
+    //photo
+
+    var photos=[];
+
+    for (var key in feature.extensions.attachment) {
+        
+        attachment=feature.extensions.attachment[key];
+        
+        if (attachment.is_image) {
+        var featureNameField=key;
+        photos.push(attachment);
+        }
+    }
+
+    // html
     
     var header = '';
     
     if (featureNameField) { 
+        if (data[featureNameField]) {
         var header = header + '<div id="identifyFeatureName">'+data[featureNameField]+'</div>'; 
+        }
     }
 
     
@@ -227,6 +285,15 @@ function getPopupHTML(feature,FieldsDescriptions) {
         }
     }
     content=content+'</table>';
+
+
+        for (var key in photos) {
+        photo=photos[key];
+        content=content+'<a target="_blank" href="'+NGWLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/download"><img src="'+NGWLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/image?size='+NGWPhotoThumbnailSize+'" >'+'</img></a>';
+        
+    }
+
+
     return header+content+footer;
 
 }
@@ -235,11 +302,10 @@ function getPopupHTML(feature,FieldsDescriptions) {
 
 function whenClicked(e) {
 
-    //var url=ngwLayerURL+'/feature/'+String(e.target.feature.id);
+    //var url=NGWLayerURL+'/feature/'+String(e.target.feature.id);
 
     //featureData=queryGetFeatureInfo(e);
 
-    //console.log(e.target.feature);
 
 
     var feature;
@@ -248,10 +314,32 @@ function whenClicked(e) {
     popupHTML = getPopupHTML(e.target.feature,LayerDescription);
 
 
-    var popup = new L.Popup();
+    var divNode = document.createElement('DIV');
+    divNode.innerHTML = popupHTML;
+
+    var popup = new L.Popup({maxWidth:500});
     popup.setLatLng(e.latlng);
-    popup.setContent(popupHTML);
+    popup.setContent(divNode);
+
+
+
+function onPopupImageLoad() {
+    marker._popup._update();
+}
+
+/*
+var images = popup.contentNode.getElementsByTagName('img');
+
+for (var i = 0, len = images.length; i < len; i++) {
+    images[i].onload = onPopupImageLoad;
+}
+
+*/
     map.openPopup(popup);
+
+
+
+
 
 
 
@@ -278,7 +366,6 @@ if (nRequest['aliaces'].readyState==4) {
                attrInfo[fieldsInfo[key].keyname]=fieldsInfo[key];
 
                 }
-                //console.log(attrInfo);
             LayerDescription = attrInfo;    //put to global variable
             return attrInfo;
 
