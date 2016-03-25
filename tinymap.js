@@ -22,7 +22,7 @@ var nRequest = new Array;
 var LayerDescription = new Array;
 
 
-var ngwLayerURL = config.ngwLayerURL;
+var NGWLayerURL = config.NGWLayerURL;
 
 if (config.NGWPhotoThumbnailSize) {
 
@@ -32,8 +32,6 @@ else
 {
     var NGWPhotoThumbnailSize='400x300';
 }
-
-
 
 
 		var standartIcon = L.icon({
@@ -89,7 +87,7 @@ function initmap() {
 
 	// create the tile layer with correct attribution
 	var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-	var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://primorsky.ru/">Официальный сайт Администрации Приморского края</a>';
+	var osmAttrib='Картографические данные © <a href="http://openstreetmap.org">OpenStreetMap</a>';
 	var osm = new L.TileLayer(osmUrl, {minZoom: 0, maxZoom: 18, attribution: osmAttrib});		
 
 
@@ -103,16 +101,18 @@ function initmap() {
 
 	askForPlots();
 	map.on('moveend', onMapMove);
+    //map.addControl(L.control.attribution('ddd'))
+    //map.control.attribution.addAttribution('2343423');
+//varName = L.control.attribution({prefix: 'some text'}).addTo(map);
 
     //set map extent to bbox of ngwLayers
-    setTimeout(function(){ map.fitBounds(ngwLayerGroup.getBounds().pad(0.8));}, 900);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
+    setTimeout(function(){ map.fitBounds(ngwLayerGroup.getBounds().pad(0.8));}, 1500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
 
 
     //get layer aliases from ngw
 
-    //LayerDescription=getNGWDescribeFeatureType(ngwLayerURL);
-    getNGWDescribeFeatureType(ngwLayerURL);
-
+    getNGWDescribeFeatureType(NGWLayerURL);
+    map.attributionControl.setPrefix(config.NGWLayerAttribution);
 
 
 
@@ -121,6 +121,7 @@ function initmap() {
 
 function addDataToMap(data, map) {
     var dataLayer = L.geoJson(data);
+
     dataLayer.addTo(map);
 }
 
@@ -130,7 +131,7 @@ function askForPlots() {
 	var minll=bounds.getSouthWest();
 	var maxll=bounds.getNorthEast();
 
-    var msg=ngwLayerURL+'/feature/';
+    var msg=NGWLayerURL+'/feature/';
 
 	nRequest['geodata'].onreadystatechange = function() {
     
@@ -149,7 +150,8 @@ function askForPlots() {
                 onEachFeature: onEachFeature,
                 pointToLayer: function (feature, latlng) {
                     return L.marker(latlng, {icon: standartIcon});
-                    }
+                    },
+                attribution: 'пяни',
                 });
                 ngwLayerGroup.addLayer(geojsonLayer);
 
@@ -219,9 +221,6 @@ geojson['features']=[];
     
         geojson['features'].push(geojsonFeature);
 
-        //if (value.label_field) {
-        //var featureNameField=key;
-        //}
     }
 
 return geojson;
@@ -290,7 +289,7 @@ function getPopupHTML(feature,FieldsDescriptions) {
 
         for (var key in photos) {
         photo=photos[key];
-        content=content+'<a target="_blank" href="'+ngwLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/download"><img src="'+ngwLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/image?size='+NGWPhotoThumbnailSize+'" >'+'</img></a>';
+        content=content+'<a target="_blank" href="'+NGWLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/download"><img src="'+NGWLayerURL+'/feature/'+feature.id+'/attachment/'+photo.id+'/image?size='+NGWPhotoThumbnailSize+'" >'+'</img></a>';
         
     }
 
@@ -303,7 +302,7 @@ function getPopupHTML(feature,FieldsDescriptions) {
 
 function whenClicked(e) {
 
-    //var url=ngwLayerURL+'/feature/'+String(e.target.feature.id);
+    //var url=NGWLayerURL+'/feature/'+String(e.target.feature.id);
 
     //featureData=queryGetFeatureInfo(e);
 
