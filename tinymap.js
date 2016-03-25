@@ -273,7 +273,9 @@ function getPopupHTML(feature,FieldsDescriptions) {
     var header = '';
     
     if (featureNameField) { 
+        if (data[featureNameField]) {
         var header = header + '<div id="identifyFeatureName">'+data[featureNameField]+'</div>'; 
+        }
     }
 
     
