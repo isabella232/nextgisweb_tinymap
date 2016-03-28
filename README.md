@@ -36,9 +36,9 @@ Installation
  1. Rename config.example.js to config.js
  2. Set NGWLayerURL and attribution string in config.js
 
-```
-NGWLayerURL: 'http://176.9.38.120/practice2/api/resource/31'
-```
+  ```
+  NGWLayerURL: 'http://176.9.38.120/practice2/api/resource/31'
+  ```
 
  3. Выставите права в NextGIS Web
 
