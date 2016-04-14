@@ -22,6 +22,15 @@ var nRequest = new Array;
 var LayerDescription = new Array;
 
 
+if (typeof config == "undefined") {
+   console.log('Error: Config file for nextgisweb_tinymap not loaded.');
+}
+if (typeof pointToLayer == "undefined") {
+   console.log('Error: Leaflet map style file for nextgisweb_tinymap not loaded.');
+}
+
+
+
 var NGWLayerURL = config.NGWLayerURL;
 
 if (config.NGWPhotoThumbnailSize) {
@@ -32,30 +41,6 @@ else
 {
     var NGWPhotoThumbnailSize='400x300';
 }
-
-
-		var standartIcon = L.icon({
-			iconUrl: 'icons/moi_dokumenty.png',
-			iconSize: [30, 30],
-			iconAnchor: [15, 15],
-			popupAnchor: [0, -28]
-		});
-
-
-var standartIcon = L.icon({
-    iconUrl: 'icons/moi_dokumenty.png',
-    //shadowUrl: 'leaf-shadow.png',
-
-    iconSize:     [32, 42], // size of the icon
-    //shadowSize:   [50, 64], // size of the shadow
-    iconAnchor:   [16, 21], // point of the icon which will correspond to marker's location
-    //shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor:  [1, 1] // point from which the popup should open relative to the iconAnchor
-
-
-
-});
-
 
 
 
@@ -148,10 +133,8 @@ function askForPlots() {
 
                 geojsonLayer = L.Proj.geoJson(geojson,{
                 onEachFeature: onEachFeature,
-                pointToLayer: function (feature, latlng) {
-                    return L.marker(latlng, {icon: standartIcon});
-                    },
-                attribution: 'пяни',
+                pointToLayer: pointToLayer,
+                attribution: '',
                 });
                 ngwLayerGroup.addLayer(geojsonLayer);
 
