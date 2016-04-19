@@ -65,6 +65,8 @@ root
 
 Bounding box will be calculated authomatically.
 
+using https://github.com/gregjacobs/Autolinker.js
+
 License
 -------------
 This program is licensed under GNU GPL v2 or any later version

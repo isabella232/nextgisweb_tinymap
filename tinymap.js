@@ -256,6 +256,7 @@ function getPopupHTML(feature,FieldsDescriptions) {
     }
 
     
+    //attributes
     var header = header + '<div  style="height:300px;  overflow-y: auto;">';
     var footer='</div>';
     var content='';
@@ -268,6 +269,35 @@ function getPopupHTML(feature,FieldsDescriptions) {
         }
     }
     content=content+'</table>';
+
+    //create hrefs in attributes
+    //settings demo: http://gregjacobs.github.io/Autolinker.js/examples/live-example/
+    //library source: https://github.com/gregjacobs/Autolinker.js MIT
+    var autolinker = new Autolinker( {
+    urls : {
+        schemeMatches : true,
+        wwwMatches    : true,
+        tldMatches    : true
+    },
+    email       : false,
+    phone       : false,
+    twitter     : false,
+    hashtag     : false,
+
+    stripPrefix : true,
+    newWindow   : true,
+
+    truncate : {
+        length   : 0,
+        location : 'end'
+    },
+
+    className : ''
+} );
+
+    var myLinkedHtml = autolinker.link( content );
+    content=myLinkedHtml;
+    
 
 
         for (var key in photos) {
