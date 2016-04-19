@@ -22,6 +22,15 @@ var nRequest = new Array;
 var LayerDescription = new Array;
 
 
+if (typeof config == "undefined") {
+   console.log('Error: Config file for nextgisweb_tinymap not loaded.');
+}
+if (typeof pointToLayer == "undefined") {
+   console.log('Error: Leaflet map style file for nextgisweb_tinymap not loaded.');
+}
+
+
+
 var NGWLayerURL = config.NGWLayerURL;
 
 if (config.NGWPhotoThumbnailSize) {
@@ -32,30 +41,6 @@ else
 {
     var NGWPhotoThumbnailSize='400x300';
 }
-
-
-		var standartIcon = L.icon({
-			iconUrl: 'icons/moi_dokumenty.png',
-			iconSize: [30, 30],
-			iconAnchor: [15, 15],
-			popupAnchor: [0, -28]
-		});
-
-
-var standartIcon = L.icon({
-    iconUrl: 'icons/moi_dokumenty.png',
-    //shadowUrl: 'leaf-shadow.png',
-
-    iconSize:     [32, 42], // size of the icon
-    //shadowSize:   [50, 64], // size of the shadow
-    iconAnchor:   [16, 21], // point of the icon which will correspond to marker's location
-    //shadowAnchor: [4, 62],  // the same for the shadow
-    popupAnchor:  [1, 1] // point from which the popup should open relative to the iconAnchor
-
-
-
-});
-
 
 
 
@@ -101,12 +86,18 @@ function initmap() {
 
 	askForPlots();
 	map.on('moveend', onMapMove);
-    //map.addControl(L.control.attribution('ddd'))
-    //map.control.attribution.addAttribution('2343423');
-//varName = L.control.attribution({prefix: 'some text'}).addTo(map);
+
 
     //set map extent to bbox of ngwLayers
-    setTimeout(function(){ map.fitBounds(ngwLayerGroup.getBounds().pad(0.8));}, 1500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
+    switch (config.DefaultBBOXMode) {
+        case 'manual':
+        map.setView(new L.LatLng(config.lat, config.lon),config.zoom);
+
+        break;
+    default:
+        setTimeout(function(){ map.fitBounds(ngwLayerGroup.getBounds().pad(0.8));}, 1500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
+
+    }
 
 
     //get layer aliases from ngw
@@ -148,10 +139,8 @@ function askForPlots() {
 
                 geojsonLayer = L.Proj.geoJson(geojson,{
                 onEachFeature: onEachFeature,
-                pointToLayer: function (feature, latlng) {
-                    return L.marker(latlng, {icon: standartIcon});
-                    },
-                attribution: 'пяни',
+                pointToLayer: pointToLayer,
+                attribution: '',
                 });
                 ngwLayerGroup.addLayer(geojsonLayer);
 
@@ -273,6 +262,7 @@ function getPopupHTML(feature,FieldsDescriptions) {
     }
 
     
+    //attributes
     var header = header + '<div  style="height:300px;  overflow-y: auto;">';
     var footer='</div>';
     var content='';
@@ -285,6 +275,35 @@ function getPopupHTML(feature,FieldsDescriptions) {
         }
     }
     content=content+'</table>';
+
+    //create hrefs in attributes
+    //settings demo: http://gregjacobs.github.io/Autolinker.js/examples/live-example/
+    //library source: https://github.com/gregjacobs/Autolinker.js MIT
+    var autolinker = new Autolinker( {
+    urls : {
+        schemeMatches : true,
+        wwwMatches    : true,
+        tldMatches    : true
+    },
+    email       : false,
+    phone       : false,
+    twitter     : false,
+    hashtag     : false,
+
+    stripPrefix : true,
+    newWindow   : true,
+
+    truncate : {
+        length   : 0,
+        location : 'end'
+    },
+
+    className : ''
+} );
+
+    var myLinkedHtml = autolinker.link( content );
+    content=myLinkedHtml;
+    
 
 
         for (var key in photos) {
