@@ -3,7 +3,7 @@ Simple Lefleat based map frontend for [NextGIS Web](http://nextgis.ru/nextgis-we
 
 One-page map with one layer added from NextGIS Web. You can click on features and see their attributes. This app provides an example of how to make maps with NGW for your website.
 
-Live demo: http://nextgis.github.io/nextgisweb_tinymap/
+[s]Live demo: http://nextgis.github.io/nextgisweb_tinymap/[s] Не работает, нет сервера
 
 ![screenshot](screenshot.png)
 
