@@ -86,12 +86,18 @@ function initmap() {
 
 	askForPlots();
 	map.on('moveend', onMapMove);
-    //map.addControl(L.control.attribution('ddd'))
-    //map.control.attribution.addAttribution('2343423');
-//varName = L.control.attribution({prefix: 'some text'}).addTo(map);
+
 
     //set map extent to bbox of ngwLayers
-    setTimeout(function(){ map.fitBounds(ngwLayerGroup.getBounds().pad(0.8));}, 1500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
+    switch (config.DefaultBBOXMode) {
+        case 'manual':
+        map.setView(new L.LatLng(config.lat, config.lon),config.zoom);
+
+        break;
+    default:
+        setTimeout(function(){ map.fitBounds(ngwLayerGroup.getBounds().pad(0.8));}, 1500);    //taken from https://groups.google.com/forum/#!topic/leaflet-vector-layers/5Fbhv26mmUI
+
+    }
 
 
     //get layer aliases from ngw

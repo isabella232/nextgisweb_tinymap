@@ -19,6 +19,7 @@ Features
 - [x] Showing photos from NextGIS Web
 - [x] Attribution strings set in config file
 - [x] Leaflet PointToLayer function store in separate mapstyle file
+- [x] Links in attribution table making active automatically
 
 Not implemented yet
 
