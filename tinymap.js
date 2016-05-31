@@ -70,15 +70,31 @@ function initmap() {
 	// set up the map
 	map = new L.Map('map');
 
-	// create the tile layer with correct attribution
+
+
+
+	// start the map in South-East England
+	map.setView(new L.LatLng(120, 37.7),6);
+
+	// create basemap tile layers with attribution --- OSM
 	var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 	var osmAttrib='Картографические данные © <a href="http://openstreetmap.org">OpenStreetMap</a>';
 	var osm = new L.TileLayer(osmUrl, {minZoom: 0, maxZoom: 18, attribution: osmAttrib});		
 
 
-	// start the map in South-East England
-	map.setView(new L.LatLng(120, 37.7),6);
-	map.addLayer(osm);
+	// create basemap tile layers with attribution --- Sputnik
+	var tmsUrl='http://{s}.tiles.maps.sputnik.ru/{z}/{x}/{y}.png';
+	var tmsAttrib='<a href="http://maps.sputnik.ru">Спутник</a> © Ростелеком © <a href="http://wiki.openstreetmap.org">Openstreetmap</a>';
+	var tms = new L.TileLayer(tmsUrl, {minZoom: 0, maxZoom: 18, attribution: tmsAttrib});		
+
+
+    basemaps={'Openstreetmap':osm,'Sputnik':tms};
+
+    L.control.layers(basemaps).addTo(map);
+    basemaps.Sputnik.addTo(map);
+
+
+
     map.fitWorld();
 
     ngwLayerGroup = L.featureGroup().addTo(map);
@@ -218,6 +234,9 @@ return geojson;
 
 
 
+//Generate HTML for popup 
+
+
 function getPopupHTML(feature,FieldsDescriptions) {
 
     data=feature.properties;
@@ -317,7 +336,7 @@ function getPopupHTML(feature,FieldsDescriptions) {
 
 }
 
-//<div style="overflow-y: scroll;">
+
 
 function whenClicked(e) {
 
@@ -365,6 +384,7 @@ for (var i = 0, len = images.length; i < len; i++) {
 }
 
 
+//Get fields information
 
 function getNGWDescribeFeatureType(url)
 {
