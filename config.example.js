@@ -11,3 +11,12 @@ var config = {
 //    zoom:8,                         //Optional
 
 }
+
+
+	var tmsUrl='http://opendata25.primorsky.ru/ngw/api/component/render/tile?resource=535&z={z}&x={x}&y={y}';
+	var tmsAttrib='Слой границ';
+	var tmsBoundaries = new L.TileLayer(tmsUrl, {minZoom: 0, maxZoom: 18, attribution: tmsAttrib});	
+    config_overlays={'Границы':tmsBoundaries};
+
+
+    config.overlays=config_overlays;

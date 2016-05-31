@@ -76,6 +76,11 @@ function initmap() {
 	// start the map in South-East England
 	map.setView(new L.LatLng(120, 37.7),6);
 
+
+    //Add map layers
+
+    //Basemaps
+
 	// create basemap tile layers with attribution --- OSM
 	var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 	var osmAttrib='Картографические данные © <a href="http://openstreetmap.org">OpenStreetMap</a>';
@@ -90,8 +95,21 @@ function initmap() {
 
     basemaps={'Openstreetmap':osm,'Sputnik':tms};
 
-    L.control.layers(basemaps).addTo(map);
+
+    //Overlays
+
+	// create overlay tile layer 
+/*
+	var tmsUrl='http://opendata25.primorsky.ru/ngw/api/component/render/tile?resource=535&z={z}&x={x}&y={y}';
+	var tmsAttrib='Слой границ';
+	var tmsBoundaries = new L.TileLayer(tmsUrl, {minZoom: 0, maxZoom: 18, attribution: tmsAttrib});	
+    overlays={'Границы':tmsBoundaries};
+*/
+
+    overlays=config.overlays;
+    L.control.layers(basemaps,overlays).addTo(map);
     basemaps.Sputnik.addTo(map);
+    overlays['Границы'].addTo(map);
 
 
 
