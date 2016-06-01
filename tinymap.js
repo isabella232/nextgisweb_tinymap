@@ -79,7 +79,7 @@ function initmap() {
 
     //Add map layers
 
-    //Basemaps
+    //-----------------------------------------------------------------------------------------------------------  Basemaps
 
 	// create basemap tile layers with attribution --- OSM
 	var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -94,29 +94,22 @@ function initmap() {
 
 
     basemaps={'Openstreetmap':osm,'Sputnik':tms};
+    overlays=config.overlays;  
 
-
-    //Overlays
-
-	// create overlay tile layer 
-/*
-	var tmsUrl='http://opendata25.primorsky.ru/ngw/api/component/render/tile?resource=535&z={z}&x={x}&y={y}';
-	var tmsAttrib='Слой границ';
-	var tmsBoundaries = new L.TileLayer(tmsUrl, {minZoom: 0, maxZoom: 18, attribution: tmsAttrib});	
-    overlays={'Границы':tmsBoundaries};
-*/
-
-    overlays=config.overlays;
+    //Add basemap and tms overlays to layers control
     L.control.layers(basemaps,overlays).addTo(map);
     basemaps.Sputnik.addTo(map);
-    overlays['Границы'].addTo(map);
 
-
+    //Add every tms overlays to map
+    for (var key in overlays) {
+        if (!overlays.hasOwnProperty(key)) continue;
+        overlays[key].addTo(map);
+    }
 
     map.fitWorld();
 
+    //Add NGW vector overlay at map
     ngwLayerGroup = L.featureGroup().addTo(map);
-
 
 	askForPlots();
 	map.on('moveend', onMapMove);
