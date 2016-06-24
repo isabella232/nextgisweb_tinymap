@@ -11,3 +11,10 @@ NGWLayerAttribution:'<a href="http://primorsky.ru/">Исходные данны�
     zoom:8,                         //Optional
 
 }
+
+    config.overlays={
+
+        //Optional TMS overlays
+        'Границы'  :new L.TileLayer('http://opendata25.primorsky.ru/ngw/api/component/render/tile?resource=535&z={z}&x={x}&y={y}', {minZoom: 0, maxZoom: 18, attribution: 'Слой АТД: Администрация Приморского края'}),
+
+    };
